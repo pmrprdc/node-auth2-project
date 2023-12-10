@@ -1,11 +1,10 @@
 /**
-  Fix this module so other modules can require JWT_SECRET into them.
-  Use the || operator to fall back to the string "shh" to handle the situation
-  where the process.env does not have JWT_SECRET.
-
-  If no fallback is provided, TESTS WON'T WORK and other
-  developers cloning this repo won't be able to run the project as is.
+  This module exports the JWT_SECRET variable. It first tries to get the value from
+  the environment variable 'JWT_SECRET'. If 'JWT_SECRET' is not set in the environment,
+  it falls back to the string "shh". This ensures that tests and other developers cloning
+  the repository can run the project without needing to set up this environment variable.
  */
-module.exports = {
-
-}
+  module.exports = {
+    JWT_SECRET: process.env.JWT_SECRET || "shh"
+  }
+  
