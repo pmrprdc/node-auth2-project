@@ -5,18 +5,29 @@ const Users = require('../users/users-model')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-router.post("/register", validateRoleName, (req, res, next) => {
-  /**
-    [POST] /api/auth/register { "username": "anna", "password": "1234", "role_name": "angel" }
 
-    response:
-    status 201
-    {
-      "user"_id: 3,
-      "username": "anna",
-      "role_name": "angel"
-    }
-   */
+// POST endpoint for registering a new user
+router.post("/register", validateRoleName, async (req, res, next) => {
+  try {
+      // Extract user data from request body
+      const { username, password, role_name } = req.body;
+      if(!role_name){
+        req.body.role_name = '3';
+      }
+      const newUser = await Users.add({ username, password, role_name});
+      console.log(newUser)
+      // Assuming registration is successful, and the user's id is obtained
+      const user_id = newUser.id; // Replace with the actual user ID from your database
+
+      // Send a response
+      res.status(201).json(newUser
+          
+  );
+  } catch (error) {
+      // Handle any errors that might occur during registration
+      console.error(error);
+      res.status(500).json({ message: 'Error registering new user' });
+  }
 });
 
 
@@ -24,17 +35,15 @@ router.post("/register", validateRoleName, (req, res, next) => {
 
 router.post('/login', (req, res) => {
   let { username, password } = req.body;
-    console.log(username, password)
    Users.findBy({ username })
     .first()
     .then(user => {
-      console.log(user)
       if (user && bcrypt.compareSync(password, user.password)) {
         const token = generateToken(user); // new line
         // the server needs to return the token to the client
         // this doesn't happen automatically like it happens with cookies
         res.status(200).json({
-          message: `Welcome ${user.username}!, have a token...`,
+          message: `${user.username} is back.`,
           token, // attach the token as part of the response
         });
       } else {
@@ -49,13 +58,14 @@ router.post('/login', (req, res) => {
 
 function generateToken(user) {
   const payload = {
-    subject: user.id, // sub in payload is what the token is about
-    username: user.username,
-    // ...otherData
+    subject: user.user_id,  // Assuming 'user.id' is 1 for the test user
+    role_name: user.role_name,
+    username: user.username
   };
+  
 
   const options = {
-    expiresIn: '1d', // show other available options in the library's documentation//
+    expiresIn: '1h', // show other available options in the library's documentation//
   };
 
   // extract the secret away so it can be required and used where needed
