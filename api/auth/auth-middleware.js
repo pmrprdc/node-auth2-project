@@ -55,7 +55,7 @@ const validateRoleName = (req, res, next) => {
       // Respond with error if role_name is 'admin'
       if (req.body.role_name.toLowerCase() === 'admin') {
           return res.status(422).json({
-              message: "Role name cannot be admin"
+              message: "can not be admin"
           });
       }
 
@@ -66,7 +66,7 @@ const validateRoleName = (req, res, next) => {
       // Respond with error if role_name is over 32 characters
       if (req.body.role_name.length > 32) {
           return res.status(422).json({
-              message: "Role name cannot be longer than 32 chars"
+              message: "can not be longer than 32 chars"
           });
       }
   
