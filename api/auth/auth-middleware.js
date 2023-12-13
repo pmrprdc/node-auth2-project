@@ -44,33 +44,36 @@ const checkUsernameExists = (req, res, next) => {
 
 
 const validateRoleName = (req, res, next) => {
-  let role_name = req.body.role_name ? req.body.role_name.trim() : '';
-
-  // Handling missing role_name by setting a default role
-  if (!role_name) {
-      req.body.role_name = '3'; // Replace 'user' with your actual role name that corresponds to role_id 2
-      return next();
+  // If role_name is not provided in the request, set it to '3' (default role)
+  if (!req.body.role_name) {
+      req.body.role_name = 'student';
+  } else {
+      // If role_name is provided, trim it
+      req.body.role_name = req.body.role_name.trim();
   }
+      // Respond with error if role_name is 'admin'
+      if (req.body.role_name.toLowerCase() === 'admin') {
+          return res.status(422).json({
+              message: "Role name cannot be admin"
+          });
+      }
 
+      if (req.body.role_name.toLowerCase() === 'instructor') {
+        req.body.role_id = '2'
+    }
+  
+      // Respond with error if role_name is over 32 characters
+      if (req.body.role_name.length > 32) {
+          return res.status(422).json({
+              message: "Role name cannot be longer than 32 chars"
+          });
+      }
+  
 
-  // Respond with error if role_name is 'admin'
-  if (role_name.toLowerCase() === 'admin') {
-      return res.status(422).json({
-          message: "Role name cannot be admin"
-      });
-  }
-
-  // Respond with error if role_name is over 32 characters
-  if (role_name.length > 32) {
-      return res.status(422).json({
-          message: "Role name cannot be longer than 32 chars"
-      });
-  }
-
-  // Set the trimmed role_name and proceed
-  req.body.role_name = role_name;
+  // Proceed to the next middleware
   next();
 };
+
 
 
 

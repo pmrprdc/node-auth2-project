@@ -11,18 +11,9 @@ router.post("/register", validateRoleName, async (req, res, next) => {
   try {
       // Extract user data from request body
       const { username, password, role_name } = req.body;
-      if(!role_name){
-        req.body.role_name = '3';
-      }
+      
       const newUser = await Users.add({ username, password, role_name});
-      console.log(newUser)
-      // Assuming registration is successful, and the user's id is obtained
-      const user_id = newUser.id; // Replace with the actual user ID from your database
-
-      // Send a response
-      res.status(201).json(newUser
-          
-  );
+      res.status(201).json(newUser);
   } catch (error) {
       // Handle any errors that might occur during registration
       console.error(error);
