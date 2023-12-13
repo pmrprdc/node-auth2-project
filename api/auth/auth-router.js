@@ -11,8 +11,9 @@ router.post("/register", validateRoleName, async (req, res, next) => {
   try {
       // Extract user data from request body
       const { username, password, role_name } = req.body;
-      
-      const newUser = await Users.add({ username, password, role_name});
+      const hashedPassword = await bcrypt.hash(password, 8); // 8 is the number of rounds for salting
+
+      const newUser = await Users.add({ username, password: hashedPassword, role_name});
       res.status(201).json(newUser);
   } catch (error) {
       // Handle any errors that might occur during registration
